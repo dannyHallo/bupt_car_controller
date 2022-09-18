@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.thedeadwaltz">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
     <application
         android:allowBackup="true"
@@ -15,7 +15,8 @@
 
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="userLandscape">
+            android:screenOrientation="fullSensor"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,10 +25,7 @@
         </activity>
         <activity
             android:name=".Control"
-            android:screenOrientation="userLandscape"/>
-        <activity
-            android:name=".Settings"
-            android:screenOrientation="userLandscape" />
+            android:screenOrientation="fullSensor"/>
     </application>
 
 </manifest>

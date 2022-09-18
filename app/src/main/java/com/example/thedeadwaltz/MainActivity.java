@@ -417,12 +417,14 @@ void loop(){
 
 package com.example.thedeadwaltz;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.hardware.SensorManager;
 import android.net.sip.SipSession;
 import android.os.Bundle;
@@ -434,6 +436,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -446,7 +449,7 @@ public class MainActivity extends AppCompatActivity {
 
     // MAC Address of Bluetooth Module, you might have to change this for your own device
     // download "serial bluetooth" in google store if you cannot find the MAC in settings
-    private final String DEVICE_ADDRESS = "98:DA:60:04:FE:BC";
+    private final String DEVICE_ADDRESS = "C0:49:EF:CB:BD:EA";
 
     //serial special UUID between the phone and bluetooth, no need to change
     //this special UUID is for sending serial data between two devices, the devices have to know
@@ -492,6 +495,16 @@ public class MainActivity extends AppCompatActivity {
         } else if (!bluetoothAdapter.isEnabled()) //Checks if bluetooth is enabled. If not, the program will ask permission from the user to enable it
         {
             Intent enableAdapter = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return false;
+            }
             startActivityForResult(enableAdapter, 0);
 
             try {
