@@ -1,0 +1,10 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+        <!-- Customize your theme here. -->
+
+        <item name="android:colorButtonNormal">@color/colorBase</item>
+        <item name="colorControlHighlight">@color/colorDown</item>
+    </style>
+
+</resources>

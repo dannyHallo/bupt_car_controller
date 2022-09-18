@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">theDeadWaltz</string>
+    <drawable name="normal">#FF1665</drawable>
+    <drawable name="pressed">#FFFFFF</drawable>
+</resources>

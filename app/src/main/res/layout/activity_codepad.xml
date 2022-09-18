@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Codepad">
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/showText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@+id/n8"
+            android:layout_marginBottom="20dp"
+            android:text="You need to be qualified"
+            android:textSize="20sp"/>
+
+        <Button
+            android:id="@+id/n8"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_above="@id/n5"
+            android:layout_alignLeft="@id/n5"
+            android:layout_marginBottom="10dp"
+            android:text="8"
+            android:textSize="25sp">
+
+        </Button>
+
+        <Button
+            android:id="@+id/n7"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_above="@id/n5"
+            android:layout_alignLeft="@id/n4"
+            android:layout_marginBottom="10dp"
+            android:text="7"
+            android:textSize="25sp">
+
+        </Button>
+
+        <Button
+            android:id="@+id/n9"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_above="@id/n5"
+            android:layout_alignLeft="@id/n6"
+            android:layout_marginBottom="10dp"
+            android:text="9"
+            android:textSize="25sp">
+
+        </Button>
+
+        <Button
+            android:id="@+id/n5"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_centerInParent="true"
+            android:text="5"
+            android:textSize="25sp">
+
+        </Button>
+
+        <Button
+            android:id="@+id/n6"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_alignTop="@id/n5"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@id/n5"
+            android:text="6"
+            android:textSize="25sp">
+
+        </Button>
+
+        <Button
+            android:id="@+id/n4"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_alignTop="@id/n5"
+            android:layout_marginEnd="10dp"
+            android:layout_toStartOf="@id/n5"
+            android:text="4"
+            android:textSize="25sp">
+
+        </Button>
+
+        <Button
+            android:id="@+id/n2"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_below="@id/n5"
+            android:layout_alignLeft="@id/n5"
+            android:layout_marginTop="10dp"
+            android:text="2"
+            android:textSize="25sp">
+
+        </Button>
+
+        <Button
+            android:id="@+id/n1"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_below="@id/n5"
+            android:layout_alignLeft="@id/n4"
+            android:layout_marginTop="10dp"
+            android:text="1"
+            android:textSize="25sp">
+
+        </Button>
+
+        <Button
+            android:id="@+id/n3"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_below="@id/n5"
+            android:layout_alignLeft="@id/n6"
+            android:layout_marginTop="10dp"
+            android:text="3"
+            android:textSize="25sp">
+
+        </Button>
+
+        <Button
+            android:id="@+id/back_btn"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_below="@id/n1"
+            android:layout_alignLeft="@id/n4"
+            android:layout_marginTop="10dp"
+            android:text="bk"
+            android:textSize="20sp">
+
+        </Button>
+
+        <Button
+            android:id="@+id/n0"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_below="@id/n1"
+            android:layout_alignLeft="@id/n5"
+            android:layout_marginTop="10dp"
+            android:text="0"
+            android:textSize="25sp">
+
+        </Button>
+
+        <Button
+            android:id="@+id/commitLaunch_btn"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_below="@id/n1"
+            android:layout_alignLeft="@id/n6"
+            android:layout_marginTop="10dp"
+            android:text="go"
+            android:textSize="20sp">
+
+        </Button>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+
+</LinearLayout>
