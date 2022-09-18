@@ -32,8 +32,8 @@
                 android:layout_margin="10dp"
                 android:background="@color/colorPrimary"
                 android:clickable="false"
-                android:fontFamily="@font/jackeyfont"
-                android:text="START\n[開 始]"
+                android:fontFamily="@font/ss_regular"
+                android:text="START"
                 android:textSize="40sp" />
 
             <Button
@@ -44,8 +44,8 @@
                 android:layout_margin="10dp"
                 android:background="@color/colorPrimary"
                 android:clickable="false"
-                android:fontFamily="@font/jackeyfont"
-                android:text="END\n[結 束]"
+                android:fontFamily="@font/ss_regular"
+                android:text="END"
                 android:textSize="40sp" />
         </LinearLayout>
 
@@ -68,8 +68,8 @@
                     android:layout_weight="1"
                     android:layout_margin="10dp"
                     android:background="@color/colorPrimary"
-                    android:fontFamily="@font/jackeyfont"
-                    android:text="[加 油]"
+                    android:fontFamily="@font/ss_regular"
+                    android:text="BLANK"
                     android:textSize="40sp" />
 
                 <Button
@@ -79,21 +79,116 @@
                     android:layout_weight="1"
                     android:layout_margin="10dp"
                     android:background="@color/colorPrimary"
-                    android:fontFamily="@font/jackeyfont"
-                    android:text="[減 油]"
+                    android:fontFamily="@font/ss_regular"
+                    android:text="BLANK"
                     android:textSize="40sp" />
             </LinearLayout>
 
-            <Button
-                android:id="@+id/back_btn"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:layout_margin="10dp"
-                android:background="@color/colorPrimary"
-                android:fontFamily="@font/jackeyfont"
-                android:text="BACK  [返 回] ！"
-                android:textSize="40sp" />
+                android:layout_margin="6dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/turning_lvl_0_btn"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:layout_margin="4dp"
+                    android:background="@color/colorPrimary"
+                    android:fontFamily="@font/ss_regular"
+                    android:text="&lt;"
+                    android:textSize="40sp" />
+
+                <Button
+                    android:id="@+id/turning_lvl_1_btn"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:layout_margin="4dp"
+                    android:background="@color/colorPrimary"
+                    android:fontFamily="@font/ss_regular"
+                    android:text="&lt;"
+                    android:textSize="40sp" />
+
+                <Button
+                    android:id="@+id/turning_lvl_2_btn"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:layout_margin="4dp"
+                    android:background="@color/colorPrimary"
+                    android:fontFamily="@font/ss_regular"
+                    android:text="&lt;"
+                    android:textSize="40sp" />
+
+                <Button
+                    android:id="@+id/turning_lvl_3_btn"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:layout_margin="4dp"
+                    android:background="@color/colorPrimary"
+                    android:fontFamily="@font/ss_regular"
+                    android:text="&lt;"
+                    android:textSize="40sp" />
+
+                <Button
+                    android:id="@+id/turning_lvl_4_btn"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:layout_margin="4dp"
+                    android:background="@color/colorPrimary"
+                    android:fontFamily="@font/ss_regular"
+                    android:text="0"
+                    android:textSize="40sp" />
+
+                <Button
+                    android:id="@+id/turning_lvl_5_btn"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:layout_margin="4dp"
+                    android:background="@color/colorPrimary"
+                    android:fontFamily="@font/ss_regular"
+                    android:text="&gt;"
+                    android:textSize="40sp" />
+                <Button
+                    android:id="@+id/turning_lvl_6_btn"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:layout_margin="4dp"
+                    android:background="@color/colorPrimary"
+                    android:fontFamily="@font/ss_regular"
+                    android:text="&gt;"
+                    android:textSize="40sp" />
+                <Button
+                    android:id="@+id/turning_lvl_7_btn"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:layout_margin="4dp"
+                    android:background="@color/colorPrimary"
+                    android:fontFamily="@font/ss_regular"
+                    android:text="&gt;"
+                    android:textSize="40sp" />
+                <Button
+                    android:id="@+id/turning_lvl_8_btn"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:layout_margin="4dp"
+                    android:background="@color/colorPrimary"
+                    android:fontFamily="@font/ss_regular"
+                    android:text="&gt;"
+                    android:textSize="40sp" />
+
+            </LinearLayout>
+
 
         </LinearLayout>
 
@@ -106,31 +201,66 @@
 
         <LinearLayout
             android:layout_width="0dp"
+            android:layout_margin="6dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="1.2"
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/leftForward_btn"
+                android:id="@+id/power_lvl_4_btn"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_margin="10dp"
+                android:layout_margin="4dp"
                 android:layout_weight="1"
                 android:background="@color/colorPrimary"
-                android:fontFamily="@font/jackeyfont"
-                android:text="[左 前]\nL&amp;F"
+                android:fontFamily="@font/ss_regular"
+                android:text="3"
                 android:textSize="40sp" />
 
             <Button
-                android:id="@+id/leftBack_btn"
+                android:id="@+id/power_lvl_3_btn"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_margin="10dp"
+                android:layout_margin="4dp"
                 android:layout_weight="1"
                 android:background="@color/colorPrimary"
-                android:fontFamily="@font/jackeyfont"
-                android:text="[左 後]\nL&amp;B"
+                android:fontFamily="@font/ss_regular"
+                android:text="2"
                 android:textSize="40sp" />
+
+            <Button
+                android:id="@+id/power_lvl_2_btn"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@color/colorPrimary"
+                android:fontFamily="@font/ss_regular"
+                android:text="1"
+                android:textSize="40sp" />
+
+            <Button
+                android:id="@+id/power_lvl_1_btn"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@color/colorPrimary"
+                android:fontFamily="@font/ss_regular"
+                android:text="0"
+                android:textSize="40sp" />
+            <Button
+                android:id="@+id/power_lvl_0_btn"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@color/colorPrimary"
+                android:fontFamily="@font/ss_regular"
+                android:text="-1"
+                android:textSize="40sp" />
+
+
         </LinearLayout>
 
         <LinearLayout
@@ -141,15 +271,14 @@
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/rightForward_btn"
+                android:id="@+id/cam_config_btn"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_margin="10dp"
                 android:layout_weight="1"
                 android:background="@color/colorPrimary"
-                android:fontFamily="@font/jackeyfont"
-                android:text="[右 前]\nR&amp;F"
-
+                android:fontFamily="@font/ss_regular"
+                android:text="Cam"
                 android:textSize="40sp" />
 
             <Button
@@ -159,8 +288,8 @@
                 android:layout_margin="10dp"
                 android:layout_weight="1"
                 android:background="@color/colorPrimary"
-                android:fontFamily="@font/jackeyfont"
-                android:text="[右 後]\nR&amp;B"
+                android:fontFamily="@font/ss_regular"
+                android:text=""
 
                 android:textSize="40sp" />
 

@@ -12,7 +12,12 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -25,7 +30,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.UUID;
 
-public class Control extends AppCompatActivity {
+public class Control extends AppCompatActivity implements SensorEventListener {
     //MAC Address of Bluetooth Module
     private final String DEVICE_ADDRESS = "8C:AA:B5:93:2F:CA";
     //serial special UUID between the phone and bluetooth, no need to change
@@ -35,12 +40,18 @@ public class Control extends AppCompatActivity {
     private BluetoothSocket socket;
     private OutputStream outputStream;
 
-    Button mLeftForward_btn, mLeftBack_btn, mRightForward_btn, mRightBack_btn,
-            mBack_btn, mTakecontrol_btn, mStopcontrol_btn, mLower_fuel_btn, mAdd_fuel_btn;
+    private SensorManager sensorManager = null;
+    private Sensor gyroSensor = null;
+
+    private int throttleSliderCommandSlot = -1;
+
+    Button
+            power_lvl_0_btn, power_lvl_1_btn, power_lvl_2_btn, power_lvl_3_btn, power_lvl_4_btn,
+            cam_config_btn, mRightForward_btn, mRightBack_btn, mBack_btn, mTakecontrol_btn,
+            mStopcontrol_btn, mLower_fuel_btn, mAdd_fuel_btn;
 
     String command; //string variable that will store value to be transmitted to the bluetooth module
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,222 +62,98 @@ public class Control extends AppCompatActivity {
         device = MainActivity.device;
         socket = MainActivity.socket;
         outputStream = MainActivity.outputStream;
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
 
         //set to full screen
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        //declaration of button variables
-        mLeftForward_btn = (Button) findViewById(R.id.leftForward_btn);
-        mLeftBack_btn = (Button) findViewById(R.id.leftBack_btn);
-        mRightForward_btn = (Button) findViewById(R.id.rightForward_btn);
-        mRightBack_btn = (Button) findViewById(R.id.rightBack_btn);
-        mBack_btn = (Button) findViewById(R.id.back_btn);
+        power_lvl_0_btn = (Button) findViewById(R.id.power_lvl_0_btn);
+        power_lvl_1_btn = (Button) findViewById(R.id.power_lvl_1_btn);
+        power_lvl_2_btn = (Button) findViewById(R.id.power_lvl_2_btn);
+        power_lvl_3_btn = (Button) findViewById(R.id.power_lvl_3_btn);
+        power_lvl_4_btn = (Button) findViewById(R.id.power_lvl_4_btn);
+
+        cam_config_btn = (Button) findViewById(R.id.cam_config_btn);
+
         mTakecontrol_btn = (Button) findViewById(R.id.takecontrol_btn);
         mStopcontrol_btn = (Button) findViewById(R.id.stopcontrol_btn);
-        mLower_fuel_btn = (Button) findViewById(R.id.lower_fuel_btn);
-        mAdd_fuel_btn = (Button) findViewById(R.id.add_fuel_btn);
 
-        //OnTouchListener code for the forward button (button long press)
-        mLeftForward_btn.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    //z here is for the arduino program identify and cut the word, see also in my
-                    //arduino project
-                    command = Character.toString(AllCommands.COMMAND_L_WHEEL_FORWARD);
-
-                    try {
-                        outputStream.write(command.getBytes());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    command = Character.toString(AllCommands.COMMAND_L_WHEEL_FORWARD_S);
-
-
-                    try {
-                        outputStream.write(command.getBytes());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-
-                return false;
-            }
-
-        });
-
-
-        mLeftBack_btn.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    command = Character.toString(AllCommands.COMMAND_L_WHEEL_BACKWARD);
-
-
-                    try {
-                        outputStream.write(command.getBytes());
-                    } catch (IOException e) { 
-                        e.printStackTrace();
-                    }
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    command = Character.toString(AllCommands.COMMAND_L_WHEEL_BACKWARD_S);
-
-
-                    try {
-                        outputStream.write(command.getBytes());
-                    } catch (IOException e) {
-
-                    }
-
-                }
-                return false;
-            }
-        });
-
-
-        mRightForward_btn.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    command = Character.toString(AllCommands.COMMAND_R_WHEEL_FORWARD);
-
-
-                    try {
-                        outputStream.write(command.getBytes());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    command = Character.toString(AllCommands.COMMAND_R_WHEEL_FORWARD_S);
-
-
-                    try {
-                        outputStream.write(command.getBytes());
-                    } catch (IOException e) {
-
-                    }
-
-                }
-                return false;
-            }
-        });
-
-        mRightBack_btn.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    command = Character.toString(AllCommands.COMMAND_R_WHEEL_BACKWARD);
-                    try {
-                        outputStream.write(command.getBytes());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    command = Character.toString(AllCommands.COMMAND_R_WHEEL_BACKWARD_S);
-                    try {
-                        outputStream.write(command.getBytes());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                return false;
-            }
-        });
-
-        mTakecontrol_btn.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    command = Character.toString(AllCommands.COMMAND_START_LISTEN);
-                    try {
-                        outputStream.write(command.getBytes());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                return false;
-            }
-        });
-
-        mStopcontrol_btn.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    command = Character.toString(AllCommands.COMMAND_STOP_LISTEN);
-                    try {
-                        outputStream.write(command.getBytes());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                return false;
-            }
-        });
-
-        mLower_fuel_btn.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    command = Character.toString(AllCommands.COMMAND_LOWER_FUEL);
-                    try {
-                        outputStream.write(command.getBytes());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                return false;
-            }
-        });
-
-        mAdd_fuel_btn.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    command = Character.toString(AllCommands.COMMAND_ADD_FUEL);
-                    try {
-                        outputStream.write(command.getBytes());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                return false;
-            }
-        });
-
-        mBack_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setClass(Control.this, MainActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
-
-    protected void onResume() {
-        super.onResume();
-        command = " ";
-
-        try {
-            outputStream.write(command.getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        bindButton(power_lvl_0_btn, AllCommands.COMMAND_POWER_LEVEL_0_ACTIVE);
+        bindButton(power_lvl_1_btn, AllCommands.COMMAND_POWER_LEVEL_1_ACTIVE);
+        bindButton(power_lvl_2_btn, AllCommands.COMMAND_POWER_LEVEL_2_ACTIVE);
+        bindButton(power_lvl_3_btn, AllCommands.COMMAND_POWER_LEVEL_3_ACTIVE);
+        bindButton(power_lvl_4_btn, AllCommands.COMMAND_POWER_LEVEL_4_ACTIVE);
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
+        sensorManager.registerListener(this, gyroSensor,
+                SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(this); // 解除监听器注册
     }
 
     public void showToast(String msg) {
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
     }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void bindButton(Button btn, final int command) {
+        btn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    btn.setBackgroundColor(getResources().getColor(R.color.colorDown));
+
+                    try {
+                        outputStream.write(command);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    btn.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+
+                    try {
+                        outputStream.write(command + 1);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent mSensorEvent) {
+        float rotateAxis = mSensorEvent.values[2]; // 90 -> -90
+        int angleRearranged = 90 - Math.round(rotateAxis); // 0 -> 180
+        if(angleRearranged < 0 || angleRearranged > 180) angleRearranged = -1 - AllCommands.BIAS_TURNING_START; // Invalid num
+
+        angleRearranged += AllCommands.BIAS_TURNING_START; // BIAS_TURNING_START -> BIAS_TURNING_START + 180 OR -1
+        Log.d("ANGLE = ", String.valueOf(angleRearranged));
+
+        try {
+            outputStream.write(angleRearranged);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }

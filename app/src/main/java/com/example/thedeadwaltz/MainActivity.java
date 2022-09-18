@@ -538,9 +538,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean BTconnect() {
         boolean connected = false;
 
-        if(socket == null){
+        if (socket == null) {
             try {
-                //Creates a socket to handle the outgoing connection
                 socket = device.createRfcommSocketToServiceRecord(PORT_UUID);
                 socket.connect();
                 connected = true;
