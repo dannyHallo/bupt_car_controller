@@ -26,6 +26,11 @@
         <activity
             android:name=".Control"
             android:screenOrientation="fullSensor"/>
+
+        <activity
+            android:name=".CameraDebug"
+            android:screenOrientation="fullSensor"/>
+
     </application>
 
 </manifest>

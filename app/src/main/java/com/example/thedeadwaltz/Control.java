@@ -8,8 +8,6 @@
 package com.example.thedeadwaltz;
 
 import android.annotation.SuppressLint;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.hardware.Sensor;
@@ -17,6 +15,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,42 +27,31 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.UUID;
 
 public class Control extends AppCompatActivity implements SensorEventListener {
-    //MAC Address of Bluetooth Module
-    private final String DEVICE_ADDRESS = "8C:AA:B5:93:2F:CA";
-    //serial special UUID between the phone and bluetooth, no need to change
-    private final UUID PORT_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
-
-    private BluetoothDevice device;
-    private BluetoothSocket socket;
     private OutputStream outputStream;
 
     private SensorManager sensorManager = null;
     private Sensor gyroSensor = null;
 
-    private int throttleSliderCommandSlot = -1;
+    private int angleToBeSentThisFrame = -1;
+    private int angleSentLastFrame = -1;
+    private int angleSendThreadDelay = 50;
+    private Handler handler = null;
 
     Button
-            power_lvl_0_btn, power_lvl_1_btn, power_lvl_2_btn, power_lvl_3_btn, power_lvl_4_btn,
-            cam_config_btn, mRightForward_btn, mRightBack_btn, mBack_btn, mTakecontrol_btn,
-            mStopcontrol_btn, mLower_fuel_btn, mAdd_fuel_btn;
-
-    String command; //string variable that will store value to be transmitted to the bluetooth module
+            power_lvl_0_btn, power_lvl_1_btn, power_lvl_2_btn, boost_btn,
+            camera_config_btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_control);
 
-        //In this activity, I just take the pairing data out from MainActivity, no need to connect again,
-        //in other words, if you lose connection, you have to go back to connect
-        device = MainActivity.device;
-        socket = MainActivity.socket;
         outputStream = MainActivity.outputStream;
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+        handler = new Handler();
 
         //set to full screen
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -73,24 +61,21 @@ public class Control extends AppCompatActivity implements SensorEventListener {
         power_lvl_0_btn = (Button) findViewById(R.id.power_lvl_0_btn);
         power_lvl_1_btn = (Button) findViewById(R.id.power_lvl_1_btn);
         power_lvl_2_btn = (Button) findViewById(R.id.power_lvl_2_btn);
-        power_lvl_3_btn = (Button) findViewById(R.id.power_lvl_3_btn);
-        power_lvl_4_btn = (Button) findViewById(R.id.power_lvl_4_btn);
 
-        cam_config_btn = (Button) findViewById(R.id.cam_config_btn);
+        camera_config_btn = (Button) findViewById(R.id.camera_config_btn);
+        boost_btn = (Button) findViewById(R.id.boost_btn);
 
-        mTakecontrol_btn = (Button) findViewById(R.id.takecontrol_btn);
-        mStopcontrol_btn = (Button) findViewById(R.id.stopcontrol_btn);
-
-        bindButton(power_lvl_0_btn, AllCommands.COMMAND_POWER_LEVEL_0_ACTIVE);
-        bindButton(power_lvl_1_btn, AllCommands.COMMAND_POWER_LEVEL_1_ACTIVE);
-        bindButton(power_lvl_2_btn, AllCommands.COMMAND_POWER_LEVEL_2_ACTIVE);
-        bindButton(power_lvl_3_btn, AllCommands.COMMAND_POWER_LEVEL_3_ACTIVE);
-        bindButton(power_lvl_4_btn, AllCommands.COMMAND_POWER_LEVEL_4_ACTIVE);
+        bindButtonCommand(power_lvl_0_btn, AllCommands.BIAS_POWER_LEVEL_START + AllCommands.COMMAND_POWER_LEVEL_0_ACTIVE);
+        bindButtonCommand(power_lvl_1_btn, AllCommands.BIAS_POWER_LEVEL_START + AllCommands.COMMAND_POWER_LEVEL_1_ACTIVE);
+        bindButtonCommand(power_lvl_2_btn, AllCommands.BIAS_POWER_LEVEL_START + AllCommands.COMMAND_POWER_LEVEL_2_ACTIVE);
+        bindButtonCommand(boost_btn, AllCommands.COMMAND_BOOST);
+        bindButtonCameraDebug(camera_config_btn);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        sendAngleThread.run();
         sensorManager.registerListener(this, gyroSensor,
                 SensorManager.SENSOR_DELAY_NORMAL);
     }
@@ -98,7 +83,8 @@ public class Control extends AppCompatActivity implements SensorEventListener {
     @Override
     protected void onPause() {
         super.onPause();
-        sensorManager.unregisterListener(this); // 解除监听器注册
+        sensorManager.unregisterListener(this);
+        handler.removeCallbacks(sendAngleThread);
     }
 
     public void showToast(String msg) {
@@ -106,7 +92,7 @@ public class Control extends AppCompatActivity implements SensorEventListener {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private void bindButton(Button btn, final int command) {
+    private void bindButtonCommand(Button btn, final int command) {
         btn.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -135,6 +121,27 @@ public class Control extends AppCompatActivity implements SensorEventListener {
         });
     }
 
+    @SuppressLint("ClickableViewAccessibility")
+    private void bindButtonCameraDebug(Button btn) {
+        btn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    btn.setBackgroundColor(getResources().getColor(R.color.colorDown));
+                }
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    btn.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+
+                    Intent intent = new Intent();
+                    intent.setClass(Control.this, CameraDebug.class);
+                    startActivity(intent);
+                }
+
+                return false;
+            }
+        });
+    }
+
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
@@ -142,18 +149,27 @@ public class Control extends AppCompatActivity implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent mSensorEvent) {
         float rotateAxis = mSensorEvent.values[2]; // 90 -> -90
-        int angleRearranged = 90 - Math.round(rotateAxis); // 0 -> 180
-        if(angleRearranged < 0 || angleRearranged > 180) angleRearranged = -1 - AllCommands.BIAS_TURNING_START; // Invalid num
+        angleToBeSentThisFrame = 90 - Math.round(rotateAxis); // 0 -> 180
+        if (angleToBeSentThisFrame < 0 || angleToBeSentThisFrame > 180)
+            angleToBeSentThisFrame = -1 - AllCommands.BIAS_TURNING_START; // Invalid num
 
-        angleRearranged += AllCommands.BIAS_TURNING_START; // BIAS_TURNING_START -> BIAS_TURNING_START + 180 OR -1
-        Log.d("ANGLE = ", String.valueOf(angleRearranged));
-
-        try {
-            outputStream.write(angleRearranged);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        angleToBeSentThisFrame += AllCommands.BIAS_TURNING_START; // BIAS_TURNING_START -> BIAS_TURNING_START + 180 OR -1
     }
 
-
+    Runnable sendAngleThread = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                if (angleSentLastFrame != angleToBeSentThisFrame && angleToBeSentThisFrame != -1) {
+                    Log.d("SENDING ANGLE: ", String.valueOf(angleToBeSentThisFrame));
+                    outputStream.write(angleToBeSentThisFrame);
+                    angleSentLastFrame = angleToBeSentThisFrame;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                handler.postDelayed(sendAngleThread, angleSendThreadDelay);
+            }
+        }
+    };
 }

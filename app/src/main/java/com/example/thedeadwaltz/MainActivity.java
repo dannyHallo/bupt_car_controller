@@ -543,13 +543,13 @@ public class MainActivity extends AppCompatActivity {
                 socket = device.createRfcommSocketToServiceRecord(PORT_UUID);
                 socket.connect();
                 connected = true;
-                showToast("Connected");
+                showToast("connected");
                 Intent intent = new Intent();
                 intent.setClass(MainActivity.this, Control.class);
                 startActivity(intent);
             } catch (IOException e) {
                 e.printStackTrace();
-                showToast("UUID did't paired, try again if you tapped twice");
+                showToast("UUID did't paired");
             }
         }else{
             Intent intent = new Intent();
